@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'readonly_attr/version'
+require 'read_only_attr/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "readonly_attr"
-  spec.version       = ReadonlyAttr::VERSION
+  spec.name          = "read_only"
+  spec.version       = ReadOnlyAttr::VERSION
   spec.authors       = ["Ruslan Kornev"]
   spec.email         = ["oganer@gmail.com"]
   spec.summary       = %q{TODO: Write a short summary. Required.}

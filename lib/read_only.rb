@@ -1,4 +1,4 @@
-require "readonly_attr/version"
+require "read_only/version"
 
 module ReadOnly
 
