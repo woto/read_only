@@ -1,4 +1,4 @@
-# ReadonlyAttr
+# ReadOnly
 
 TODO: Write a gem description
 

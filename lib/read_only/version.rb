@@ -1,3 +1,3 @@
-module ReadonlyAttr
+module ReadOnly
   VERSION = "0.0.2"
 end
