@@ -1,46 +1,54 @@
 require "readonly_attr/version"
 
-module ReadonlyAttr
+module ReadOnly
 
   module FormHelper
-    def readonly_field object_name, method, options={}
+    def read_only object_name, method, options={}
       text_field object_name, "_#{method}", options
     end
   end
 
   module FormBuilder
-    def readonly_field(method, options = {}, &block)
-      @template.readonly_field(@object_name, method, objectify_options(options), &block)
+    def read_only(method, options = {}, &block)
+      @template.read_only(@object_name, method, objectify_options(options), &block)
     end
   end
 
 
-  module ReadonlyConcern
+  module ReadOnlyConcern
     extend ActiveSupport::Concern
     included do
 
-      def self.readonly_accessor name
-        define_method name do
-          var = instance_variable_get("@#{name}")
-          Rails.application.message_verifier(name).verify(var)
+      def self.read_only attr_name
+
+        define_method "#{attr_name}_before_type_cast" do
+          var = instance_variable_get("@_#{attr_name}")
+          if var.present?
+            Rails.application.message_verifier(attr_name).verify(var)
+          end
         end
 
-        define_method("#{name}=") do |val|
-          var = Rails.application.message_verifier(name).generate(val)
-          instance_variable_set("@#{name}", var)
+        define_method("#{attr_name}=") do |val|
+          var = Rails.application.message_verifier(attr_name).generate(val)
+          send("_#{attr_name}=", var)
         end
 
-        #define_method "#{name}_before_type_cast" do
-        #  var = instance_variable_get("@#{name}")
-        #  #var = Rails.application.message_verifier(name).verify(name)
-        #end
-
-        define_method "_#{name}" do
-          instance_variable_get("@#{name}")
+        define_method "_#{attr_name}" do
+          instance_variable_get("@_#{attr_name}")
         end
 
-        define_method "_#{name}=" do |val|
-          instance_variable_set("@#{name}", val)
+        define_method "_#{attr_name}=" do |val|
+          instance_variable_set("@_#{attr_name}", val)
+
+          var = Rails.application.message_verifier(attr_name).verify(val)
+
+          if self.class.column_names.include? "#{attr_name}"
+            # active_record attributes
+            write_attribute("#{attr_name}", var)
+          end
+
+          # attr_accessor attributes
+          instance_variable_set("@#{attr_name}", var)
         end
 
       end
@@ -50,12 +58,12 @@ module ReadonlyAttr
 
 
   class Railtie < Rails::Railtie
-    initializer "ReadonlyAttr" do
-      #ActionController::Base.helper(ReadonlyAttr::ViewHelper)
-      ActionView::Helpers::FormHelper.send(:include, ReadonlyAttr::FormHelper)
-      #ActionView::Base.send(:include, ReadonlyAttr::FormHelper)
-      ActionView::Helpers::FormBuilder.send(:include, ReadonlyAttr::FormBuilder)
-      ActiveRecord::Base.send(:include, ReadonlyConcern)
+    initializer "ReadOnly" do
+      #ActionController::Base.helper(ReadOnly::ViewHelper)
+      ActionView::Helpers::FormHelper.send(:include, ReadOnly::FormHelper)
+      #ActionView::Base.send(:include, ReadOnly::FormHelper)
+      ActionView::Helpers::FormBuilder.send(:include, ReadOnly::FormBuilder)
+      ActiveRecord::Base.send(:include, ReadOnlyConcern)
     end
   end
 end
