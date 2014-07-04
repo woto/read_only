@@ -61,7 +61,7 @@ module ReadOnly
     initializer "ReadOnly" do
       #ActionController::Base.helper(ReadOnly::ViewHelper)
       ActionView::Helpers::FormHelper.send(:include, ReadOnly::FormHelper)
-      #ActionView::Base.send(:include, ReadOnly::FormHelper)
+      ActionView::Base.send(:include, ReadOnly::FormHelper)
       ActionView::Helpers::FormBuilder.send(:include, ReadOnly::FormBuilder)
       ActiveRecord::Base.send(:include, ReadOnlyConcern)
     end
