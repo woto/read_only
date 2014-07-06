@@ -4,7 +4,10 @@ module ReadOnly
 
   module FormHelper
     def read_only object_name, method, options={}
-      text_field object_name, "_#{method}", options
+      options[:value] = Rails.application.message_verifier(method).generate(options[:value]) if options.key?(:value)
+      label = label(object_name, "_#{method}")
+      input = text_field(object_name, "_#{method}", options)
+      content_tag(:div, (label + tag(:br) + input))
     end
   end
 
@@ -20,18 +23,6 @@ module ReadOnly
     included do
 
       def self.read_only attr_name
-
-        define_method "#{attr_name}_before_type_cast" do
-          var = instance_variable_get("@_#{attr_name}")
-          if var.present?
-            Rails.application.message_verifier(attr_name).verify(var)
-          end
-        end
-
-        define_method("#{attr_name}=") do |val|
-          var = Rails.application.message_verifier(attr_name).generate(val)
-          send("_#{attr_name}=", var)
-        end
 
         define_method "_#{attr_name}" do
           instance_variable_get("@_#{attr_name}")
