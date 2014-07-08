@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = ReadOnly::VERSION
   spec.authors       = ["Ruslan Kornev"]
   spec.email         = ["oganer@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
-  spec.homepage      = ""
+  spec.summary       = %q{The main advantage of using this gem is made encrpyted read only fields. Beaware of Replay Attacks.}
+  spec.description   = %q{}
+  spec.homepage      = "https://github.com/woto/readonly_attr"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")

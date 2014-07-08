@@ -7,7 +7,7 @@ module ReadOnly
       options[:value] = Rails.application.message_verifier(method).generate(options[:value]) if options.key?(:value)
       label = label(object_name, "_#{method}")
       input = text_field(object_name, "_#{method}", options)
-      content_tag(:div, (label + tag(:br) + input))
+      content_tag(:div, label + tag(:br) + input, style: 'margin: 5px 0; display: none')
     end
   end
 
@@ -23,6 +23,8 @@ module ReadOnly
     included do
 
       def self.read_only attr_name
+
+        # validates "_#{attr_name}", presence: true
 
         define_method "_#{attr_name}" do
           instance_variable_get("@_#{attr_name}")
